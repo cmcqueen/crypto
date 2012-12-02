@@ -10,7 +10,8 @@ class FPEInteger:
     """
     Format-Preserving Encryption.
     This uses AES, but it does not conform to the proposed AES-FFX[radix] standard.
-    Inputs and outputs for encryption and decryption are integers of 96 or fewer bits.
+    Inputs and outputs for encryption and decryption are integers.
+    This should be suitable for block sizes of up to 2**96.
     """
     def __init__(self, key, rounds=10, radix=2, width=32):
         '''
@@ -23,7 +24,12 @@ class FPEInteger:
         modulos = [ radix**part_width for part_width in part_widths ]
         self.modulos = modulos
 
-        if radix**width <= 2**32:
+        # Pick a suitable block encryption function, with a large enough block size, and also
+        # keeping any bias of the final modulo operation reasonably small.
+        block_size = radix**width
+        self.block_size = block_size
+        if ((block_size <= 2**32) or
+          ((block_size <= 2**64) and ((2**128 % block_size) == 0))):
             self.block_encrypt_func = self.block_encrypt_func_small
         else:
             self.block_encrypt_func = self.block_encrypt_func_large
@@ -80,23 +86,25 @@ class FPEInteger:
 if __name__ == "__main__":
     radix = 10
     width = 7
-
-    if radix == 10:
-        print_base = 'd'
-        print_width = width
-    elif radix == 8:
-        print_base = 'o'
-        print_width = width
-    else:
-        print_base = 'X'
-        max_val = radix**width
-        print_width = 1
-        while 16**print_width < max_val:
-            print_width += 1
-    #print(print_base, print_width)
+    should_print = True
 
     fpe_obj = FPEInteger(key=b"testtesttestaaaa", radix=radix, width=width)
-    #print(fpe_obj.block_encrypt_func.__name__)
+    #print("Using block encrypt function '{0}'".format(fpe_obj.block_encrypt_func.__name__))
+
+    if should_print:
+        print("Radix {0}, width {1}".format(radix, width))
+        if radix == 10:
+            print_base = 'd'
+            print_width = width
+        elif radix == 8:
+            print_base = 'o'
+            print_width = width
+        else:
+            print_base = 'X'
+            print_width = 1
+            while 16**print_width < fpe_obj.block_size:
+                print_width += 1
+        print("Printing as format '{0}', width {1}".format(print_base, print_width))
 
     run_range = 16
     #run_range = radix**width
@@ -104,7 +112,7 @@ if __name__ == "__main__":
         try:
             encrypted = fpe_obj.encrypt(i)
             decrypted = fpe_obj.decrypt(encrypted)
-            if 1:
+            if should_print:
                 print("{0:0{width}{base}} {1:0{width}{base}} {2:0{width}{base}}".format(i, encrypted, decrypted,
                     width=print_width, base=print_base))
             assert (i == decrypted)
