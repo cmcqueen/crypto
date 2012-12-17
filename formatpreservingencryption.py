@@ -7,8 +7,14 @@ See proposed AES-FFX specs:
 This uses the overall principles of AES-FFX, method 2. It doesn't conform to the proposed
 FFX-A2, FFX-A10, or FFX[radix] standards.
 
-MIT license:
+Dependencies:
 
+- Python 3
+- PyCrypto
+
+License: MIT
+
+MIT license statement is as follows:
 ----------------------------------------------------------------------------
 Copyright (c) 2012 Craig McQueen
 
