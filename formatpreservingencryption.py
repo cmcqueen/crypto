@@ -144,6 +144,7 @@ if __name__ == "__main__":
                 print_width += 1
         print("Printing as format '{0}', width {1}".format(print_base, print_width))
 
+    encrypted_outputs = set()
     run_range = 16
     #run_range = radix**width
     for i in range(run_range):
@@ -153,6 +154,8 @@ if __name__ == "__main__":
             if should_print:
                 print("{0:0{width}{base}} {1:0{width}{base}} {2:0{width}{base}}".format(i, encrypted, decrypted,
                     width=print_width, base=print_base))
+            assert (encrypted not in encrypted_outputs)
+            encrypted_outputs.add(encrypted)
             assert (i == decrypted)
         except KeyboardInterrupt:
             print('Completed {0} calculations'.format(i))
