@@ -152,7 +152,7 @@ if __name__ == "__main__":
             encrypted = fpe_obj.encrypt(i)
             decrypted = fpe_obj.decrypt(encrypted)
             if should_print:
-                print("{0:0{width}{base}} {1:0{width}{base}} {2:0{width}{base}}".format(i, encrypted, decrypted,
+                print("{0:0{width}{base}}   {1:0{width}{base}}".format(i, encrypted, decrypted,
                     width=print_width, base=print_base))
             assert (encrypted not in encrypted_outputs)
             encrypted_outputs.add(encrypted)
