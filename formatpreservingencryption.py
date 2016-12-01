@@ -149,9 +149,10 @@ if __name__ == "__main__":
         print("Printing as format '{0}', width {1}".format(print_base, print_width))
 
     encrypted_outputs = set()
+    start = 0
     run_range = 16
     #run_range = radix**width
-    for i in range(run_range):
+    for i in range(start, start + run_range):
         try:
             encrypted = fpe_obj.encrypt(i)
             decrypted = fpe_obj.decrypt(encrypted)
