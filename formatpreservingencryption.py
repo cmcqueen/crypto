@@ -124,9 +124,13 @@ class FPEInteger:
 if __name__ == "__main__":
     radix = 10
     width = 7
+    # 3 rounds is a minimum for "statistically adequate" shuffling (but not
+    # cryptographically secure). If it's less than that, there is statistical
+    # correlation between samples separated by radix**(width//2).
+    rounds = 10
     should_print = True
 
-    fpe_obj = FPEInteger(key=b"testtesttestaaaa", radix=radix, width=width)
+    fpe_obj = FPEInteger(key=b"testtesttestaaaa", rounds=rounds, radix=radix, width=width)
     #print("Using block encrypt function '{0}'".format(fpe_obj.block_encrypt_func.__name__))
 
     if should_print:
